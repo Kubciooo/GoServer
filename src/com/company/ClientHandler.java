@@ -62,21 +62,23 @@ public class ClientHandler implements Runnable
                 if (row >= SIZE || col >= SIZE || row < 0 || col < 0) {
                     for (ClientHandler mc : Main.ar)
                     {
-                        mc.dos.writeUTF(clientID + "#" + -1 +"#" + -1);
+                        int c = (clientID%2)+1;
+                        mc.dos.writeUTF(c + "#" + -1 +"#" + -1);
                     }
                 }
 
                else if (grid.isOccupied(row, col)) {
                     for (ClientHandler mc : Main.ar)
                     {
-                        mc.dos.writeUTF(clientID  + "#" + -1 +"#" + -1);
+                        int c = (clientID%2)+1;
+                        mc.dos.writeUTF(c  + "#" + -1 +"#" + -1);
                     }
                 }
                 else {
                     grid.addStone(row, col, state);
                     for (ClientHandler mc : Main.ar)
                     {
-                        mc.dos.writeUTF( ((clientID%2)+1)  + "#" + row +"#" + col);
+                        mc.dos.writeUTF(clientID  + "#" + row +"#" + col);
                     }
                 }
 
