@@ -11,15 +11,14 @@ import java.net.*;
 // Server class 
 public class Main
 {
-
-    // Vector to store active clients 
+    // Vector to store active clients
     static Vector<ClientHandler> ar = new Vector<>();
-
+    public static final int SIZE = 9;
     // counter for clients 
     static int i = 0;
-
     public static void main(String[] args) throws IOException
     {
+
         // server is listening on port 1234 
         ServerSocket ss = new ServerSocket(8080);
         System.out.println(InetAddress.getLocalHost() + "\n");
@@ -27,6 +26,7 @@ public class Main
 
         // running infinite loop for getting 
         // client request
+        Grid grid = new Grid(SIZE);
         while (true)
         {
             // Accept the incoming request 
@@ -39,9 +39,8 @@ public class Main
             DataOutputStream dos = new DataOutputStream(s.getOutputStream());
 
             System.out.println("Creating a new handler for this client...");
-
             // Create a new handler object for handling this request.
-            ClientHandler mtch = new ClientHandler(s,"client " + i, dis, dos);
+            ClientHandler mtch = new ClientHandler(s,"client " + i, dis, dos,grid);
 
             // Create a new Thread with this object.
             Thread t = new Thread(mtch);
