@@ -19,7 +19,7 @@ public class ClientHandler implements Runnable
     public static final int TILE_SIZE = 40;
     public static final int BORDER_SIZE = TILE_SIZE;
 
-    private String name;
+    private int name;
     final DataInputStream dis;
     final DataOutputStream dos;
     Socket s;
@@ -27,13 +27,18 @@ public class ClientHandler implements Runnable
     boolean isloggedin;
     State state;
     // constructor 
-    public ClientHandler(Socket s, String name, DataInputStream dis, DataOutputStream dos, Grid grid) {
+    public ClientHandler(Socket s, int name, DataInputStream dis, DataOutputStream dos, Grid grid) {
         this.grid = grid;
         this.dis = dis;
         this.dos = dos;
         this.name = name;
         this.s = s;
         this.isloggedin=true;
+        try {
+            dos.writeUTF(name+"");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -67,12 +72,11 @@ public class ClientHandler implements Runnable
                         mc.dos.writeUTF(clientID  + "#" + -1 +"#" + -1);
                     }
                 }
-
                 else {
                     grid.addStone(row, col, state);
                     for (ClientHandler mc : Main.ar)
                     {
-                        mc.dos.writeUTF(clientID + "#" + row +"#" + col);
+                        mc.dos.writeUTF( ((clientID%2)+1)  + "#" + row +"#" + col);
                     }
                 }
 

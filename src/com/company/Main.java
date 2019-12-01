@@ -15,7 +15,7 @@ public class Main
     static Vector<ClientHandler> ar = new Vector<>();
     public static final int SIZE = 9;
     // counter for clients 
-    static int i = 0;
+    static int i = 1;
     public static void main(String[] args) throws IOException
     {
 
@@ -40,7 +40,7 @@ public class Main
 
             System.out.println("Creating a new handler for this client...");
             // Create a new handler object for handling this request.
-            ClientHandler mtch = new ClientHandler(s,"client " + i, dis, dos,grid);
+            ClientHandler mtch = new ClientHandler(s,i, dis, dos,grid);
 
             // Create a new Thread with this object.
             Thread t = new Thread(mtch);
