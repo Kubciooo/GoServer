@@ -8,7 +8,7 @@ public class Grid {
     /**
      * [row][column]
      */
-    private Stone[][] stones;
+    public Stone[][] stones;
     private boolean odw[][];
     protected int wynikblack;
     protected  int wynikwhite;

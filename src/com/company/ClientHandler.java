@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.StringTokenizer;
+import java.util.concurrent.TimeUnit;
 
 import static java.lang.Integer.parseInt;
 
@@ -51,7 +52,29 @@ public class ClientHandler implements Runnable
     @Override
     public void run() {
 
-        String received;
+        String received = "";
+        try {
+            received = dis.readUTF();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(Main.ar.size()==1)Main.SIZE = Integer.parseInt(received);
+        System.out.println(Main.SIZE);
+        while(Main.ar.size() != 2){
+            System.out.println("waiting for opponent...");
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        for (ClientHandler mc : Main.ar) {
+            try {
+                mc.dos.writeUTF("found");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         while (this.isloggedin)
         {
             try

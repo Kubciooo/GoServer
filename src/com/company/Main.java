@@ -14,7 +14,8 @@ public class Main
     // Vector to store active clients
     static Vector<ClientHandler> ar = new Vector<>();
     public static int passes = 0;
-    public static final int SIZE = 9;
+    public static int SIZE = 13;
+    //public int
     // counter for clients
     static int i = 1;
     public static void main(String[] args) throws IOException
@@ -30,32 +31,36 @@ public class Main
         Grid grid = new Grid(SIZE);
         while (true)
         {
-            // Accept the incoming request 
-            s = ss.accept();
-            System.out.println("New client request received : " + s);
+            if(ar.size() < 2)
+            {
+                // Accept the incoming request
+                s = ss.accept();
+                System.out.println("New client request received : " + s);
 
-            // obtain input and output streams 
-            DataInputStream dis = new DataInputStream(s.getInputStream());
-            DataOutputStream dos = new DataOutputStream(s.getOutputStream());
+                // obtain input and output streams
+                DataInputStream dis = new DataInputStream(s.getInputStream());
+                DataOutputStream dos = new DataOutputStream(s.getOutputStream());
 
-            System.out.println("Creating a new handler for this client...");
-            // Create a new handler object for handling this request.
-            ClientHandler mtch = new ClientHandler(s,i, dis, dos,grid);
+                System.out.println("Creating a new handler for this client...");
+                // Create a new handler object for handling this request.
+                ClientHandler mtch = new ClientHandler(s,i, dis, dos,grid);
 
-            // Create a new Thread with this object.
-            Thread t = new Thread(mtch);
+                // Create a new Thread with this object.
+                Thread t = new Thread(mtch);
 
-            System.out.println("Adding this client to active client list");
+                System.out.println("Adding this client to active client list");
 
-            // add this client to active clients list 
-            ar.add(mtch);
+                // add this client to active clients list
+                ar.add(mtch);
 
-            // start the thread. 
-            t.start();
-            i++;
-            // increment i for new client. 
-            // i is used for naming only, and can be replaced 
-            // by any naming scheme
+                // start the thread.
+                t.start();
+                i++;
+                // increment i for new client.
+                // i is used for naming only, and can be replaced
+                // by any naming scheme
+
+            }
 
 
         }
