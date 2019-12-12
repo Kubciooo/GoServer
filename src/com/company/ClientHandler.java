@@ -1,23 +1,16 @@
 package com.company;
 
-import java.awt.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Scanner;
 import java.util.StringTokenizer;
 
 import static java.lang.Integer.parseInt;
-import static sun.net.www.protocol.http.AuthCacheValue.Type.Server;
 
-// ClientHandler class
 public class ClientHandler implements Runnable
 {
     public static final int SIZE = 9;
-    public static final int N_OF_TILES = SIZE - 1;
-    public static final int TILE_SIZE = 40;
-    public static final int BORDER_SIZE = TILE_SIZE;
 
     public int name;
     final DataInputStream dis;
@@ -76,24 +69,25 @@ public class ClientHandler implements Runnable
                 if (row >= SIZE || col >= SIZE || row < 0 || col < 0) {
                     for (ClientHandler mc : Main.ar)
                     {
-                        mc.dos.writeUTF(clientID + "#" + -1 + "#" + -1);
+                        int c = (clientID%2)+1;
+                        mc.dos.writeUTF(c + writeGrid()+"#"+last_row+"#"+last_col);
                     }
                 }
 
                else if (!grid.isSafe(row,col,state)) {
                     for (ClientHandler mc : Main.ar)
                     {
-                        mc.dos.writeUTF(clientID  + "#" + -1 +"#" + -1);
+                        int c = (clientID%2)+1;
+                        mc.dos.writeUTF(c + writeGrid()+"#"+last_row+"#"+last_col);
                     }
                 }
                 else {
                     grid.addStone(row, col, state);
                     last_col = col;
                     last_row = row;
-                    System.out.println(clientID + "#" +writeGrid()+"#"+last_row+"#"+last_col+"\n");
                     for (ClientHandler mc : Main.ar)
                     {
-                        mc.dos.writeUTF(clientID  + "#" + row +"#" + col);
+                        mc.dos.writeUTF(clientID +writeGrid()+"#"+last_row+"#"+last_col);
                     }
                 }
             } catch (IOException e) {
@@ -101,7 +95,6 @@ public class ClientHandler implements Runnable
                 System.out.println("Client number "+ name + " has disconnected \n");
                 isloggedin = false;
             }
-
         }
 
     }

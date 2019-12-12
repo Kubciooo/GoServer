@@ -126,21 +126,29 @@ public class Grid {
     }
     private boolean checkDFS(Stone stone, Stone ojciec){
         Stone[] neighbors = new Stone[4];
+        int corners = 0;
+        if(stone.row == 0)corners++;
+         if(stone.col == 0)corners++;
+        if(stone.row == SIZE-1)corners++;
+         if(stone.col == SIZE-1)corners++;
         if (stone.row > 0) {
             neighbors[0] = stones[stone.row - 1][stone.col];
         }
         if (stone.row < SIZE - 1) {
             neighbors[1] = stones[stone.row + 1][stone.col];
         }
-        if (stone.col > 1) {
+        if (stone.col > 0) {
             neighbors[2] = stones[stone.row][stone.col - 1];
         }
         if (stone.col < SIZE - 1) {
             neighbors[3] = stones[stone.row][stone.col + 1];
         }
         for(Stone s : neighbors){
-            if(s == ojciec)continue;
-            else if(s == null) return true;
+            if(s == null) {
+                corners--;
+                if(corners==-1)return true;
+            }
+            else if(s == ojciec)continue;
             else if(s.state == stone.state){
                 if(checkDFS(s, stone))return true;
             }
@@ -155,7 +163,7 @@ public class Grid {
         if (stone.row < SIZE - 1) {
             neighbors[1] = stones[stone.row + 1][stone.col];
         }
-        if (stone.col > 1) {
+        if (stone.col > 0) {
             neighbors[2] = stones[stone.row][stone.col - 1];
         }
         if (stone.col < SIZE - 1) {
