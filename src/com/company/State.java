@@ -1,7 +1,8 @@
 package com.company;
 
 public enum State {
-        BLACK, WHITE
+        BLACK, WHITE;
+
     }
 
 

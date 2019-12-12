@@ -45,7 +45,7 @@ public class ClientHandler implements Runnable
     public void run() {
 
         String received;
-        while (true)
+        while (this.isloggedin)
         {
             try
             {
@@ -67,7 +67,7 @@ public class ClientHandler implements Runnable
                     }
                 }
 
-               else if (grid.isOccupied(row, col)) {
+               else if (!grid.isSafe(row,col,state)) {
                     for (ClientHandler mc : Main.ar)
                     {
                         int c = (clientID%2)+1;
@@ -81,11 +81,9 @@ public class ClientHandler implements Runnable
                         mc.dos.writeUTF(clientID  + "#" + row +"#" + col);
                     }
                 }
-
-
             } catch (IOException e) {
-
-                e.printStackTrace();
+                System.out.println("Client number "+ name + " has disconnected \n");
+                isloggedin = false;
             }
 
         }

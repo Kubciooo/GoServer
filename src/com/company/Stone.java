@@ -4,7 +4,6 @@ import com.sun.net.httpserver.Filter;
 
 public class Stone {
 
-    public Chain chain;
     public State state;
     public int liberties;
     // Row and col are need to remove (set to null) this Stone from Grid
@@ -12,7 +11,6 @@ public class Stone {
     public int col;
 
     public Stone(int row, int col, State state) {
-        chain = null;
         this.state = state;
         liberties = 4;
         this.row = row;

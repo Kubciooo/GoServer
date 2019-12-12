@@ -31,7 +31,6 @@ public class Main
         {
             // Accept the incoming request 
             s = ss.accept();
-
             System.out.println("New client request received : " + s);
 
             // obtain input and output streams 
