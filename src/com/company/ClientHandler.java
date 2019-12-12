@@ -63,31 +63,45 @@ public class ClientHandler implements Runnable
                 int clientID = parseInt(st.nextToken());
                 if(clientID==1)state=State.BLACK;
                 else state = State.WHITE;
-                int row = parseInt(st.nextToken());
-                int col = parseInt(st.nextToken());
-
-                if (row >= SIZE || col >= SIZE || row < 0 || col < 0) {
-                    for (ClientHandler mc : Main.ar)
-                    {
-                        int c = (clientID%2)+1;
-                        mc.dos.writeUTF(c + writeGrid()+"#"+last_row+"#"+last_col);
+                String parameter = st.nextToken();
+                if(parameter.contains("pass")){
+                    for (ClientHandler mc : Main.ar) {
+                        mc.dos.writeUTF(clientID + writeGrid() + "#" + last_row + "#" + last_col);
                     }
+                    if(Main.passes == 1){
+                        int licz_biale = grid.podlicz_punkty(State.WHITE)+grid.wynikwhite;
+                        int licz_czarne = grid.podlicz_punkty(State.BLACK)+grid.wynikblack;
+                        System.out.println("GRA SKONCZONA. Podliczanie punktów...\nbiali: " + licz_biale  + "\nczarni: "+ licz_czarne);
+                        isloggedin = false;
+                    }
+                    else Main.passes++;
                 }
-
-               else if (!grid.isSafe(row,col,state)) {
-                    for (ClientHandler mc : Main.ar)
-                    {
-                        int c = (clientID%2)+1;
-                        mc.dos.writeUTF(c + writeGrid()+"#"+last_row+"#"+last_col);
-                    }
+                else if(parameter.contains("surr")){
+                    System.out.println("Wygrywa gracz " + (clientID%2 + 1));
+                    isloggedin = false;
                 }
                 else {
-                    grid.addStone(row, col, state);
-                    last_col = col;
-                    last_row = row;
-                    for (ClientHandler mc : Main.ar)
-                    {
-                        mc.dos.writeUTF(clientID +writeGrid()+"#"+last_row+"#"+last_col);
+                    Main.passes = 0;
+                    int row = parseInt(parameter);
+                    int col = parseInt(st.nextToken());
+
+                    if (row >= SIZE || col >= SIZE || row < 0 || col < 0) {
+                        for (ClientHandler mc : Main.ar) {
+                            int c = (clientID % 2) + 1;
+                            mc.dos.writeUTF(c + writeGrid() + "#" + last_row + "#" + last_col);
+                        }
+                    } else if (!grid.isSafe(row, col, state)) {
+                        for (ClientHandler mc : Main.ar) {
+                            int c = (clientID % 2) + 1;
+                            mc.dos.writeUTF(c + writeGrid() + "#" + last_row + "#" + last_col);
+                        }
+                    } else {
+                        grid.addStone(row, col, state);
+                        last_col = col;
+                        last_row = row;
+                        for (ClientHandler mc : Main.ar) {
+                            mc.dos.writeUTF(clientID + writeGrid() + "#" + last_row + "#" + last_col);
+                        }
                     }
                 }
             } catch (IOException e) {
@@ -96,6 +110,7 @@ public class ClientHandler implements Runnable
                 isloggedin = false;
             }
         }
+
 
     }
 } 

@@ -13,6 +13,7 @@ public class Main
 {
     // Vector to store active clients
     static Vector<ClientHandler> ar = new Vector<>();
+    public static int passes = 0;
     public static final int SIZE = 9;
     // counter for clients
     static int i = 1;
