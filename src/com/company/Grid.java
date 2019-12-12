@@ -1,17 +1,25 @@
 package com.company;
 
+import java.util.ArrayList;
+
 public class Grid {
 
-    private final int SIZE;
+    protected final int SIZE;
     /**
      * [row][column]
      */
     private Stone[][] stones;
     protected int wynikblack;
     protected  int wynikwhite;
+    protected int deleted_col;
+    protected int deleted_row;
+    protected int how_many_did_i_delete;
     public Grid(int size) {
         SIZE = size;
         stones = new Stone[SIZE][SIZE];
+        deleted_col = -1;
+        deleted_col = -1;
+        how_many_did_i_delete = 0;
     }
 
     /**
@@ -21,6 +29,9 @@ public class Grid {
      * @param col
      */
     public void addStone(int row, int col, State state) {
+        how_many_did_i_delete = 0;
+        deleted_col = -1;
+        deleted_row = -1;
         Stone newStone = new Stone(row, col, state);
         stones[row][col] = newStone;
         // Check neighbors
@@ -47,6 +58,7 @@ public class Grid {
                 checkStone(neighbor);
             }
         }
+
         //System.out.println("liberties: " + newStone.liberties+'\n');
     }
 
@@ -78,10 +90,34 @@ public class Grid {
         return stones[row][col] != null;
     }
     public boolean isSafe(int row, int col, State state) {
-        if(isOccupied(row,col)) return false;
+        if(isOccupied(row,col))return false;
+        if(row==deleted_row && col == deleted_col && how_many_did_i_delete == 1)return false;
         Stone helper = new Stone(row,col,state);
         stones[row][col] = helper;
         if(!checkDFS(helper,helper)){
+            Stone[] neighbors = new Stone[4];
+            // Don't check outside the board
+            if (row > 0) {
+                neighbors[0] = stones[row - 1][col];
+            }
+            if (row < SIZE - 1) {
+                neighbors[1] = stones[row + 1][col];
+            }
+            if (col > 1) {
+                neighbors[2] = stones[row][col - 1];
+            }
+            if (col < SIZE - 1) {
+                neighbors[3] = stones[row][col + 1];
+            }
+
+            for (Stone neighbor : neighbors) {
+                if (neighbor == null) {
+                    continue;
+                }
+                else if(neighbor.state != helper.state){
+                    if(checkDFS(neighbor,neighbor) == false)return true;
+                }
+            }
             stones[row][col] = null;
             return false;
         }
@@ -134,23 +170,12 @@ public class Grid {
         }
         stones[stone.row][stone.col] = null;
         dodajWynik(state);
+        deleted_col = stone.col;
+        deleted_row = stone.row;
+        how_many_did_i_delete++;
         System.out.println("Usunięto kolumnę " + stone.col + " wiersz " + stone.row + '\n');
     }
-    /**
-     * Returns State (black/white) of given position or null if it's unoccupied.
-     * Needs valid row and column.
-     *
-     * @param row
-     * @param col
-     * @return
-     */
-    public State getState(int row, int col) {
-        Stone stone = stones[row][col];
-        if (stone == null) {
-            return null;
-        } else {
-            // System.out.println("getState != null");
-            return stone.state;
-        }
+        public Stone[][] getStones(){
+            return stones;
     }
 }

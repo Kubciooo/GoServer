@@ -14,7 +14,7 @@ public class Main
     // Vector to store active clients
     static Vector<ClientHandler> ar = new Vector<>();
     public static final int SIZE = 9;
-    // counter for clients 
+    // counter for clients
     static int i = 1;
     public static void main(String[] args) throws IOException
     {
@@ -51,11 +51,11 @@ public class Main
 
             // start the thread. 
             t.start();
-
+            i++;
             // increment i for new client. 
             // i is used for naming only, and can be replaced 
-            // by any naming scheme 
-            i++;
+            // by any naming scheme
+
 
         }
     }
