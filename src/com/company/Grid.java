@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Grid {
 
-    protected final int SIZE;
+    protected int SIZE;
     /**
      * [row][column]
      */
@@ -64,10 +64,10 @@ public class Grid {
             if(!checkDFS(stone)){
                 odw = new boolean[SIZE][SIZE];
                 State stan = (stone.state == State.BLACK? State.WHITE : State.BLACK);
-                System.out.println(stone.state + ": " + stan + '\n');
+                //System.out.println(stone.state + ": " + stan + '\n');
                 deleteStones(stone,stan);
             }
-        System.out.println("wynik czarnych: " + wynikblack + "    wynik białych: "+wynikwhite + '\n');
+        //System.out.println("wynik czarnych: " + wynikblack + "    wynik białych: "+wynikwhite + '\n');
         }
     private void dodajWynik(State state, int i){
         if(state==State.BLACK)wynikblack+=i;
@@ -110,6 +110,7 @@ public class Grid {
             stones[row][col] = null;
             return false;
         }
+        stones[row][col]=null;
         return true;
 
     }
@@ -171,7 +172,7 @@ public class Grid {
         deleted_col = stone.col;
         deleted_row = stone.row;
         how_many_did_i_delete++;
-        System.out.println("Usunięto kolumnę " + stone.col + " wiersz " + stone.row + '\n');
+        //System.out.println("Usunięto kolumnę " + stone.col + " wiersz " + stone.row + '\n');
     }
         public Stone[][] getStones(){
             return stones;

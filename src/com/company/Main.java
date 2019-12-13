@@ -15,20 +15,21 @@ public class Main
     static Vector<ClientHandler> ar = new Vector<>();
     public static int passes = 0;
     public static int SIZE = 13;
+    public static Grid grid;
+    public static boolean FOUND = false;
     //public int
     // counter for clients
     static int i = 1;
     public static void main(String[] args) throws IOException
     {
 
-        // server is listening on port 1234 
+
         ServerSocket ss = new ServerSocket(8080);
         System.out.println(InetAddress.getLocalHost() + "\n");
         Socket s;
 
         // running infinite loop for getting 
         // client request
-        Grid grid = new Grid(SIZE);
         while (true)
         {
             if(ar.size() < 2)
