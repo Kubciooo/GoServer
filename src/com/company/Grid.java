@@ -40,7 +40,7 @@ public class Grid {
         if (row < SIZE - 1) {
             neighbors[1] = stones[row + 1][col];
         }
-        if (col > 1) {
+        if (col > 0) {
             neighbors[2] = stones[row][col - 1];
         }
         if (col < SIZE - 1) {
@@ -92,7 +92,7 @@ public class Grid {
             if (row < SIZE - 1) {
                 neighbors[1] = stones[row + 1][col];
             }
-            if (col > 1) {
+            if (col > 0) {
                 neighbors[2] = stones[row][col - 1];
             }
             if (col < SIZE - 1) {

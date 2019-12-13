@@ -2,17 +2,17 @@ package com.company;
 
 import java.util.Random;
 
+import static com.company.Main.grid;
+
 public class Bot {
     private State state;
-    private Grid grid;
     private int points;
     public int row;
     public int col;
 
 
-    public Bot(State state, Grid grid){
+    public Bot(State state){
         this.state = state;
-        this.grid = grid;
         points = 0;
     }
     private void write(){
@@ -29,6 +29,14 @@ public class Bot {
     private static int getRandomNumberInRange(int min, int max) {
         Random r = new Random();
         return r.nextInt((max - min) + 1) + min;
+    }
+    public boolean canPlace(){
+        for(int i = 0; i<grid.SIZE; i++){
+            for(int j = 0; j<grid.SIZE; j++){
+                if(grid.isSafe(i,j,state))return true;
+            }
+        }
+        return false;
     }
     public void doMove(){
         points =  grid.wynikwhite;
@@ -62,7 +70,7 @@ public class Bot {
                         if (i < grid.SIZE - 1) {
                             neighbors[1] =  grid.stones[i + 1][j];
                         }
-                        if (j > 1) {
+                        if (j > 0) {
                             neighbors[2] =  grid.stones[i][j - 1];
                         }
                         if (j <  grid.SIZE - 1) {
@@ -83,13 +91,12 @@ public class Bot {
         }
          row = getRandomNumberInRange(0,grid.SIZE-1);
          col = getRandomNumberInRange(0,grid.SIZE-1);
-        while(grid.isOccupied(row,col)){
+        while(!grid.isSafe(row,col,state)){
 
             row = getRandomNumberInRange(0,grid.SIZE-1);
             col = getRandomNumberInRange(0,grid.SIZE-1);
         }
         grid.addStone(row,col,state);
-        write();
     }
 
 

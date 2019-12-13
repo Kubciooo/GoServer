@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 
+import static com.company.Main.grid;
 import static java.lang.Integer.parseInt;
 
 public class ClientHandler implements Runnable
@@ -16,13 +17,11 @@ public class ClientHandler implements Runnable
     final DataInputStream dis;
     final DataOutputStream dos;
     Socket s;
-    public Grid grid;
     boolean isloggedin;
     State state;
     private static int last_row;
     private  static int last_col;
-    public ClientHandler(Socket s, int name, DataInputStream dis, DataOutputStream dos, Grid grid) {
-        this.grid = grid;
+    public ClientHandler(Socket s, int name, DataInputStream dis, DataOutputStream dos) {
         this.dis = dis;
         this.dos = dos;
         this.name = name;
@@ -61,17 +60,15 @@ public class ClientHandler implements Runnable
         StringTokenizer str = new StringTokenizer(received, "#");
 
         if(Main.ar.size()==1)Main.SIZE = Integer.parseInt(str.nextToken());
-        if(Main.grid == null){
-            Main.grid = new Grid(Main.SIZE);
-            this.grid = Main.grid;
-
+        if(grid == null){
+            grid = new Grid(Main.SIZE);
         }
         String pom = str.nextToken();
         System.out.println(Main.SIZE);
 
 
         if(pom.contains("bot")){
-            Bot bot = new Bot(State.WHITE,grid);
+            Bot bot = new Bot(State.WHITE);
             System.out.println(grid.SIZE+"XD\n");
             for (ClientHandler mc : Main.ar) {
                 try {
@@ -130,21 +127,30 @@ public class ClientHandler implements Runnable
                                 System.out.println(ss.countTokens());
 
                             }
-                            bot.doMove();
-                            for (ClientHandler mc : Main.ar) {
-                                mc.dos.writeUTF(2 + writeGrid() + "#" + bot.row + "#" + bot.col);
+                            TimeUnit.MILLISECONDS.sleep(300);
+                            if(bot.canPlace()) {
+
+                                bot.doMove();
+                                last_col = bot.col;
+                                last_row = bot.row;
+                                for (ClientHandler mc : Main.ar) {
+                                    mc.dos.writeUTF(2 + writeGrid() + "#" + bot.row + "#" + bot.col);
+                                }
+                            }
+                            else{
+                                for (ClientHandler mc : Main.ar) {
+                                    mc.dos.writeUTF(2 + writeGrid() + "#" + last_row + last_col);
+                                }
                             }
                         }
                     }
-                } catch (IOException e) {
+                } catch (IOException | InterruptedException e) {
                     Main.i = name;
                     System.out.println("Client number " + name + " has disconnected \n");
                     isloggedin = false;
                 }
             }
-
-
-
+            System.out.println("rozłączyło kurwaaa");
         }
         else {
             while (Main.ar.size() != 2) {
