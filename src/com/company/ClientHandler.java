@@ -91,10 +91,21 @@ public class ClientHandler implements Runnable
                             int licz_biale = grid.podlicz_punkty(State.WHITE) + grid.wynikwhite;
                             int licz_czarne = grid.podlicz_punkty(State.BLACK) + grid.wynikblack;
                             System.out.println("GRA SKONCZONA. Podliczanie punktów...\nbiali: " + licz_biale + "\nczarni: " + licz_czarne);
+                            for (ClientHandler mc : Main.ar) {
+                                int c = licz_biale > licz_czarne ? 2 : 1;
+                                mc.dos.writeUTF(  "finish#" + c + "#"+licz_czarne+"#"+licz_biale);
+                            }
                             isloggedin = false;
                         } else Main.passes++;
                     } else if (parameter.contains("surr")) {
+
                         System.out.println("Wygrywa bot");
+                        int licz_biale = grid.podlicz_punkty(State.WHITE) + grid.wynikwhite;
+                        int licz_czarne = grid.podlicz_punkty(State.BLACK) + grid.wynikblack;
+
+                        for (ClientHandler mc : Main.ar) {
+                            mc.dos.writeUTF(  "finish#2#"+ licz_czarne+"#"+licz_biale);
+                        }
                         isloggedin = false;
                     } else {
                         int row = parseInt(parameter);
@@ -169,10 +180,8 @@ public class ClientHandler implements Runnable
             }
             while (this.isloggedin) {
                 try {
-                    // receive the string
                     received = dis.readUTF();
                     System.out.println(received+"\n");
-                    // break the string into message and recipient part
                     StringTokenizer st = new StringTokenizer(received, "#");
                     int clientID = parseInt(st.nextToken());
                     if (clientID == 1) state = State.BLACK;
@@ -186,10 +195,21 @@ public class ClientHandler implements Runnable
                             int licz_biale = grid.podlicz_punkty(State.WHITE) + grid.wynikwhite;
                             int licz_czarne = grid.podlicz_punkty(State.BLACK) + grid.wynikblack;
                             System.out.println("GRA SKONCZONA. Podliczanie punktów...\nbiali: " + licz_biale + "\nczarni: " + licz_czarne);
+                            for (ClientHandler mc : Main.ar) {
+                                int c = licz_biale > licz_czarne ? 2 : 1;
+                                mc.dos.writeUTF(  "finish#" + c +"#"+ licz_czarne+"#"+licz_biale);
+                            }
                             isloggedin = false;
                         } else Main.passes++;
                     } else if (parameter.contains("surr")) {
+
                         System.out.println("Wygrywa gracz " + (clientID % 2 + 1));
+                        int c = (clientID % 2) + 1;
+                        int licz_biale = grid.podlicz_punkty(State.WHITE) + grid.wynikwhite;
+                        int licz_czarne = grid.podlicz_punkty(State.BLACK) + grid.wynikblack;
+                        for (ClientHandler mc : Main.ar) {
+                            mc.dos.writeUTF(  "finish#" + c + "#"+licz_czarne+"#"+licz_biale);
+                        }
                         isloggedin = false;
                     } else {
                         Main.passes = 0;
@@ -217,7 +237,18 @@ public class ClientHandler implements Runnable
                     }
                 } catch (IOException e) {
                     Main.i = name;
-                    System.out.println("Client number " + name + " has disconnected \n");
+                    System.out.println("Wygrywa gracz " + (name % 2 + 1));
+                    int c = (name % 2) + 1;
+                    int licz_biale = grid.podlicz_punkty(State.WHITE) + grid.wynikwhite;
+                    int licz_czarne = grid.podlicz_punkty(State.BLACK) + grid.wynikblack;
+                    for (ClientHandler mc : Main.ar) {
+                        try {
+                            mc.dos.writeUTF(  "finish#" + c + "#"+licz_czarne+"#"+licz_biale);
+                        } catch (IOException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+                    System.out.println("Klient " + name + " rozłączył się \n");
                     isloggedin = false;
                 }
             }
