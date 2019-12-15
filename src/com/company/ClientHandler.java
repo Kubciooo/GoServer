@@ -3,7 +3,6 @@ package com.company;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.Socket;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 
@@ -13,19 +12,16 @@ import static java.lang.Integer.parseInt;
 public class ClientHandler implements Runnable
 {
 
-    public int name;
-    final DataInputStream dis;
-    final DataOutputStream dos;
-    Socket s;
-    boolean isloggedin;
-    State state;
+    private int name;
+    private final DataInputStream dis;
+    private final DataOutputStream dos;
+    private boolean isloggedin;
     private static int last_row;
     private  static int last_col;
-    public ClientHandler(Socket s, int name, DataInputStream dis, DataOutputStream dos) {
+    ClientHandler(int name, DataInputStream dis, DataOutputStream dos) {
         this.dis = dis;
         this.dos = dos;
         this.name = name;
-        this.s = s;
         last_col = -1;
         last_row = -1;
         this.isloggedin=true;
@@ -37,15 +33,15 @@ public class ClientHandler implements Runnable
     }
     private String writeGrid(){
         Stone[][]s = grid.getStones();
-        String result = "";
+        StringBuilder result = new StringBuilder();
         for(int i = 0; i<Main.SIZE; i++){
             for(int j = 0; j<Main.SIZE; j++){
-                if(s[i][j] == null)result+="#N";
-                else if(s[i][j].state == State.BLACK)result+="#B";
-                else if(s[i][j].state == State.WHITE)result+="#W";
+                if(s[i][j] == null) result.append("#N");
+                else if(s[i][j].state == State.BLACK) result.append("#B");
+                else if(s[i][j].state == State.WHITE) result.append("#W");
             }
         }
-        return result;
+        return result.toString();
     }
     @Override
     public void run() {
@@ -67,9 +63,9 @@ public class ClientHandler implements Runnable
         System.out.println(Main.SIZE);
 
 
+        State state;
         if(pom.contains("bot")){
             Bot bot = new Bot(State.WHITE);
-            System.out.println(grid.SIZE+"XD\n");
             for (ClientHandler mc : Main.ar) {
                 try {
                     mc.dos.writeUTF("found");
@@ -79,10 +75,8 @@ public class ClientHandler implements Runnable
             }
             while (this.isloggedin) {
                 try {
-                    // receive the string
                     received = dis.readUTF();
                     System.out.println(received+"\n");
-                    // break the string into message and recipient part
                     StringTokenizer st = new StringTokenizer(received, "#");
                     int clientID = parseInt(st.nextToken());
                     if (clientID == 1) state = State.BLACK;
@@ -128,33 +122,33 @@ public class ClientHandler implements Runnable
 
                             }
                             TimeUnit.MILLISECONDS.sleep(300);
-                            if(bot.canPlace()) {
 
-                                bot.doMove();
-                                last_col = bot.col;
-                                last_row = bot.row;
-                                for (ClientHandler mc : Main.ar) {
-                                    mc.dos.writeUTF(2 + writeGrid() + "#" + bot.row + "#" + bot.col);
+                                int x = bot.doMove();
+                                if(x==1){
+                                    last_col = bot.col;
+                                    last_row = bot.row;
+                                    for (ClientHandler mc : Main.ar) {
+                                        mc.dos.writeUTF(2 + writeGrid() + "#" + bot.row + "#" + bot.col);
+                                    }
                                 }
-                            }
-                            else{
+                                else{
+                                    System.out.println("koniec gry!");
                                 for (ClientHandler mc : Main.ar) {
-                                    mc.dos.writeUTF(2 + writeGrid() + "#" + last_row + last_col);
+                                    mc.dos.writeUTF(2 + writeGrid() + "#" + last_row +"#"+ last_col);
                                 }
                             }
                         }
                     }
                 } catch (IOException | InterruptedException e) {
                     Main.i = name;
-                    System.out.println("Client number " + name + " has disconnected \n");
+                    System.out.println("Klient " + name + " rozłączył się \n");
                     isloggedin = false;
                 }
             }
-            System.out.println("rozłączyło kurwaaa");
         }
         else {
             while (Main.ar.size() != 2) {
-                System.out.println("waiting for opponent...");
+                System.out.println("Czekam na przeciwnika...");
                 try {
                     TimeUnit.SECONDS.sleep(1);
                 } catch (InterruptedException e) {

@@ -1,24 +1,20 @@
-package com.company;// Java implementation of  Server side
-// It contains two classes : Server and ClientHandler 
-// Save file as Server.java 
+package com.company;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Vector;
 
-import com.company.ClientHandler;
-
-import java.io.*;
-import java.util.*;
-import java.net.*;
-
-// Server class 
+@SuppressWarnings("ALL")
 public class Main
 {
-    // Vector to store active clients
     static Vector<ClientHandler> ar = new Vector<>();
-    public static int passes = 0;
-    public static int SIZE = 13;
-    public static Grid grid;
-    public static boolean FOUND = false;
-    //public int
-    // counter for clients
+    static int passes = 0;
+    static int SIZE = 13;
+    static Grid grid;
+    static boolean FOUND = false;
     static int i = 1;
     public static void main(String[] args) throws IOException
     {
@@ -28,39 +24,23 @@ public class Main
         System.out.println(InetAddress.getLocalHost() + "\n");
         Socket s;
 
-        // running infinite loop for getting 
-        // client request
         while (true)
         {
             if(ar.size() < 2)
             {
-                // Accept the incoming request
                 s = ss.accept();
-                System.out.println("New client request received : " + s);
-
-                // obtain input and output streams
+                System.out.println("Otrzymano nowego requesta : " + s);
                 DataInputStream dis = new DataInputStream(s.getInputStream());
                 DataOutputStream dos = new DataOutputStream(s.getOutputStream());
 
-                System.out.println("Creating a new handler for this client...");
-                // Create a new handler object for handling this request.
-                ClientHandler mtch = new ClientHandler(s,i, dis, dos);
-
-                // Create a new Thread with this object.
+                System.out.println("Tworzenie wątku dla nowego klienta...");
+                ClientHandler mtch = new ClientHandler(i, dis, dos);
                 Thread t = new Thread(mtch);
 
-                System.out.println("Adding this client to active client list");
-
-                // add this client to active clients list
+                System.out.println("Dodawanie tego klienta do bazy aktywnych klientów");
                 ar.add(mtch);
-
-                // start the thread.
                 t.start();
                 i++;
-                // increment i for new client.
-                // i is used for naming only, and can be replaced
-                // by any naming scheme
-
             }
 
 

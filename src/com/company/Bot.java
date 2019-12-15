@@ -4,33 +4,34 @@ import java.util.Random;
 
 import static com.company.Main.grid;
 
-public class Bot {
+@SuppressWarnings("ALL")
+class Bot {
     private State state;
     private int points;
-    public int row;
-    public int col;
+    int row;
+    int col;
 
 
-    public Bot(State state){
+    Bot(State state){
         this.state = state;
         points = 0;
     }
     private void write(){
-        String s = "";
+        StringBuilder s = new StringBuilder();
         for(int i =0; i<grid.SIZE; i++){
             for(int j = 0; j<grid.SIZE; j++){
-                s+=(grid.stones[i][j]==null? "null" : grid.stones[i][j].state) + " ";
+                s.append(grid.stones[i][j] == null ? "null" : grid.stones[i][j].state).append(" ");
             }
-            s+='\n';
+            s.append('\n');
         }
         System.out.println(s);
 
     }
-    private static int getRandomNumberInRange(int min, int max) {
+    private static int getRandomNumberInRange(int max) {
         Random r = new Random();
-        return r.nextInt((max - min) + 1) + min;
+        return r.nextInt((max) + 1);
     }
-    public boolean canPlace(){
+    private boolean canPlace(){
         for(int i = 0; i<grid.SIZE; i++){
             for(int j = 0; j<grid.SIZE; j++){
                 if(grid.isSafe(i,j,state))return true;
@@ -38,7 +39,8 @@ public class Bot {
         }
         return false;
     }
-    public void doMove(){
+    int doMove(){
+        if(!canPlace())return -1;
         points =  grid.wynikwhite;
         boolean flag = false;
         for(int i = 0; i<grid.SIZE; i++){
@@ -46,10 +48,8 @@ public class Bot {
                 if(grid.isSafe(i,j,state)){
                     grid.addStone(i,j,state);
                         if(points < grid.wynikwhite){
-                            grid.addStone(i,j,state);
                             row = i; col = j;
-                            flag = true;
-                            return;
+                            return 1;
                         }
                         else{
                             grid.stones[i][j] = null;
@@ -58,8 +58,6 @@ public class Bot {
             }
         }
 
-
-        if(!flag){
             for(int i = 0; i < grid.SIZE; i++){
                 for(int j = 0; j < grid.SIZE; j++){
                   if(grid.isSafe(i,j,state)){
@@ -79,28 +77,26 @@ public class Bot {
                         for(Stone s : neighbors){
 
                             if(s!=null && s.state == state){
-                                flag = true;
                                 row = i; col = j;
                                 grid.addStone(i,j,state);
-                                return;
+                                return 1;
                             }
                         }
                     }
                 }
             }
-        }
-         row = getRandomNumberInRange(0,grid.SIZE-1);
-         col = getRandomNumberInRange(0,grid.SIZE-1);
-        while(!grid.isSafe(row,col,state)){
 
-            row = getRandomNumberInRange(0,grid.SIZE-1);
-            col = getRandomNumberInRange(0,grid.SIZE-1);
+         row = getRandomNumberInRange(grid.SIZE-1);
+         col = getRandomNumberInRange(grid.SIZE-1);
+         int licz = 0;
+        while(!grid.isSafe(row,col,state) && licz<15){
+
+            row = getRandomNumberInRange(grid.SIZE-1);
+            col = getRandomNumberInRange(grid.SIZE-1);
+            licz++;
+            if(licz==15)return -1;
         }
         grid.addStone(row,col,state);
+        return 1;
     }
-
-
-
-
-
 }

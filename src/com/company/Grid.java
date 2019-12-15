@@ -1,31 +1,30 @@
 package com.company;
 
-import java.util.ArrayList;
+@SuppressWarnings("ALL")
+class Grid {
 
-public class Grid {
-
-    protected int SIZE;
+    int SIZE;
     /**
      * [row][column]
      */
-    public Stone[][] stones;
-    private boolean odw[][];
-    protected int wynikblack;
-    protected  int wynikwhite;
-    protected int deleted_col;
-    protected int deleted_row;
-    protected int how_many_did_i_delete;
-    protected boolean count_ter[][];
-    public Grid(int size) {
+    Stone[][] stones;
+    private boolean[][] odw;
+    int wynikblack;
+    int wynikwhite;
+    private int deleted_col;
+    private int deleted_row;
+    private int how_many_did_i_delete;
+    private boolean[][] count_ter;
+    Grid(int size) {
         SIZE = size;
         stones = new Stone[SIZE][SIZE];
-        deleted_col = -1;
+        deleted_row = -1;
         deleted_col = -1;
         how_many_did_i_delete = 0;
     }
 
 
-    public void addStone(int row, int col, State state) {
+    void addStone(int row, int col, State state) {
         how_many_did_i_delete = 0;
         deleted_col = -1;
         deleted_row = -1;
@@ -56,28 +55,26 @@ public class Grid {
             }
         }
 
-        //System.out.println("liberties: " + newStone.liberties+'\n');
     }
 
-    public void checkStone(Stone stone) {
+    private void checkStone(Stone stone) {
         odw = new boolean[SIZE][SIZE];
             if(!checkDFS(stone)){
                 odw = new boolean[SIZE][SIZE];
                 State stan = (stone.state == State.BLACK? State.WHITE : State.BLACK);
-                //System.out.println(stone.state + ": " + stan + '\n');
                 deleteStones(stone,stan);
             }
-        //System.out.println("wynik czarnych: " + wynikblack + "    wynik białych: "+wynikwhite + '\n');
+        System.out.println("wynik czarnych: " + wynikblack + "    wynik białych: "+wynikwhite + '\n');
         }
     private void dodajWynik(State state, int i){
         if(state==State.BLACK)wynikblack+=i;
         else wynikwhite++;
     }
 
-    public boolean isOccupied(int row, int col) {
+    private boolean isOccupied(int row, int col) {
         return stones[row][col] != null;
     }
-    public boolean isSafe(int row, int col, State state) {
+    boolean isSafe(int row, int col, State state) {
         odw = new boolean[SIZE][SIZE];
         if(isOccupied(row,col))return false;
         if(row==deleted_row && col == deleted_col && how_many_did_i_delete == 1)return false;
@@ -101,10 +98,14 @@ public class Grid {
 
             for (Stone neighbor : neighbors) {
                 if (neighbor == null) {
-                    continue;
                 }
                 else if(neighbor.state != helper.state){
-                    if(!checkDFS(neighbor))return true;
+                    odw = new boolean[SIZE][SIZE];
+                    if(!checkDFS(neighbor))
+                    {
+                        stones[row][col] = null;
+                        return true;
+                    }
                 }
             }
             stones[row][col] = null;
