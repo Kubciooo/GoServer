@@ -41,6 +41,8 @@ public class Main
                 ar.add(mtch);
                 t.start();
                 i++;
+                i%=2;
+                if(i==0)i=2;
             }
 
 

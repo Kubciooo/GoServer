@@ -15,7 +15,7 @@ public class ClientHandler implements Runnable
     private int name;
     private final DataInputStream dis;
     private final DataOutputStream dos;
-    private boolean isloggedin;
+    public boolean isloggedin;
     private static int last_row;
     private  static int last_col;
     ClientHandler(int name, DataInputStream dis, DataOutputStream dos) {
@@ -94,8 +94,11 @@ public class ClientHandler implements Runnable
                             for (ClientHandler mc : Main.ar) {
                                 int c = licz_biale > licz_czarne ? 2 : 1;
                                 mc.dos.writeUTF(  "finish#" + c + "#"+licz_czarne+"#"+licz_biale);
+                                mc.isloggedin = false;
                             }
-                            isloggedin = false;
+                            Main.ar.removeAllElements();
+                            grid = null;
+                            Main.i = name;
                         } else Main.passes++;
                     } else if (parameter.contains("surr")) {
 
@@ -105,7 +108,12 @@ public class ClientHandler implements Runnable
 
                         for (ClientHandler mc : Main.ar) {
                             mc.dos.writeUTF(  "finish#2#"+ licz_czarne+"#"+licz_biale);
+                            mc.isloggedin = false;
                         }
+                        Main.i = name;
+                        Main.FOUND = false;
+                        Main.ar.removeAllElements();
+                        Main.grid  = null;
                         isloggedin = false;
                     } else {
                         int row = parseInt(parameter);
@@ -152,6 +160,8 @@ public class ClientHandler implements Runnable
                     }
                 } catch (IOException | InterruptedException e) {
                     Main.i = name;
+                    Main.ar.removeAllElements();
+                    Main.FOUND = false;
                     System.out.println("Klient " + name + " rozłączył się \n");
                     isloggedin = false;
                 }
@@ -198,8 +208,14 @@ public class ClientHandler implements Runnable
                             for (ClientHandler mc : Main.ar) {
                                 int c = licz_biale > licz_czarne ? 2 : 1;
                                 mc.dos.writeUTF(  "finish#" + c +"#"+ licz_czarne+"#"+licz_biale);
+                                mc.isloggedin = false;
                             }
-                            isloggedin = false;
+                            grid = null;
+                            Main.FOUND = false;
+                            Main.ar.removeAllElements();
+                            Main.i = name;
+                            System.out.println("Klient " + name + " rozłączył się \n");
+
                         } else Main.passes++;
                     } else if (parameter.contains("surr")) {
 
@@ -207,10 +223,18 @@ public class ClientHandler implements Runnable
                         int c = (clientID % 2) + 1;
                         int licz_biale = grid.podlicz_punkty(State.WHITE) + grid.wynikwhite;
                         int licz_czarne = grid.podlicz_punkty(State.BLACK) + grid.wynikblack;
+                        if(c==1)licz_biale = 0;
+                        else licz_czarne = 0;
                         for (ClientHandler mc : Main.ar) {
                             mc.dos.writeUTF(  "finish#" + c + "#"+licz_czarne+"#"+licz_biale);
+                            mc.isloggedin = false;
+
                         }
-                        isloggedin = false;
+                        grid = null;
+                        Main.ar.removeAllElements();
+                        Main.i = name;
+                        Main.FOUND = false;
+                        System.out.println("Klient " + name + " rozłączył się \n");
                     } else {
                         Main.passes = 0;
                         int row = parseInt(parameter);
@@ -244,12 +268,16 @@ public class ClientHandler implements Runnable
                     for (ClientHandler mc : Main.ar) {
                         try {
                             mc.dos.writeUTF(  "finish#" + c + "#"+licz_czarne+"#"+licz_biale);
+                            mc.isloggedin = false;
                         } catch (IOException e1) {
                             e1.printStackTrace();
                         }
                     }
+                    grid = null;
+                    Main.ar.removeAllElements();
+                    Main.i = name;
+                    Main.FOUND = false;
                     System.out.println("Klient " + name + " rozłączył się \n");
-                    isloggedin = false;
                 }
             }
         }

@@ -1,14 +1,20 @@
 package com.company;
 
+import com.sun.source.tree.AssertTree;
 import org.testng.annotations.Test;
 
 import static com.company.State.BLACK;
 import static com.company.State.WHITE;
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.*;
 import static org.testng.AssertJUnit.assertFalse;
 
 public class GridTest{
-
+    @Test
+    public void add_stone(){
+        Grid grid = new Grid(9);
+        grid.addStone(0,0,BLACK);
+        assertSame(grid.stones[0][0].state, BLACK);
+    }
     @Test
     public void podlicz_punkty() {
         Grid grid = new Grid(9);
